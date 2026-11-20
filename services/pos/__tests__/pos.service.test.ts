@@ -373,7 +373,11 @@ function correctionInput(reason = "Customer requested return") {
 }
 
 describe("commitPOSSale accounting wiring", () => {
+  let previousPilotOrganizationId: string | undefined
+
   beforeEach(() => {
+    previousPilotOrganizationId = process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID
+    delete process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID
     jest.clearAllMocks()
     mockEnsurePostedReceivable.mockResolvedValue({
       document: { id: "receivable-document-1" },
@@ -472,7 +476,16 @@ describe("commitPOSSale accounting wiring", () => {
     mockSendReceipt.mockResolvedValue(null)
   })
 
-  it("posts the completed sale and captured POS payment inside the same transaction", async () => {
+  afterEach(() => {
+    if (previousPilotOrganizationId === undefined) {
+      delete process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID
+    } else {
+      process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID = previousPilotOrganizationId
+    }
+  })
+
+  it("posts a pilot cash sale and captured POS payment inside the same transaction", async () => {
+    process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID = "org-1"
     const result = await commitPOSSale(commitInput())
 
     expect(result).toMatchObject({
@@ -893,7 +906,7 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockPostPayment).not.toHaveBeenCalled()
   })
 
-  it("retains the on-account receivable and customer-ledger behavior", async () => {
+  it("retains on-account receivables and customer-ledger posting when no pilot is configured", async () => {
     mockTx.salesOrder.update.mockResolvedValueOnce({
       id: "sale-1",
       status: "COMPLETED",
@@ -901,13 +914,9 @@ describe("commitPOSSale accounting wiring", () => {
     })
     const result = await commitPOSSale({
       ...commitInput(),
-      tenders: [
-        {
-          method: "ON_ACCOUNT" as const,
-          amount: 118,
-        },
-      ],
+      tenders: [{ method: "ON_ACCOUNT", amount: 118 }],
     })
+
     expect(result).toMatchObject({ amountPaid: 0, onAccountAmount: 118, paymentStatus: "PENDING" })
     expect(mockEnsurePostedReceivable).toHaveBeenCalledWith(
       mockTx,
@@ -918,6 +927,33 @@ describe("commitPOSSale accounting wiring", () => {
       data: expect.objectContaining({ method: "CREDIT", status: "PENDING" }),
     }))
     expect(mockTx.paymentTransaction.findFirst).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { method: "CARD", paymentTransactionId: "card-authority-1" },
+    { method: "MOBILE_MONEY", paymentTransactionId: "mobile-money-authority-1" },
+    { method: "BANK_TRANSFER", paymentTransactionId: "bank-transfer-authority-1" },
+    { method: "ON_ACCOUNT" },
+  ] as const)("rejects $method in the cash-only pilot before writing a new sale", async (tender) => {
+    process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID = " org-1 "
+    await expect(commitPOSSale({
+      ...commitInput(),
+      tenders: [{ ...tender, amount: 118 }],
+    })).rejects.toThrow(
+      "This development POS pilot accepts cash only; electronic and on-account tenders are disabled",
+    )
+
+    expect(mockTx.pOSCommitResult.create).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.customer.updateMany).not.toHaveBeenCalled()
+    expect(mockEnsurePostedReceivable).not.toHaveBeenCalled()
+    expect(mockTx.customerLedgerEntry.create).not.toHaveBeenCalled()
+    expect(mockTx.paymentTransaction.findFirst).not.toHaveBeenCalled()
+    expect(mockTx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
     expect(mockPostPayment).not.toHaveBeenCalled()
   })
 
@@ -1111,7 +1147,8 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
   })
 
-  it("marks an electronic tender paid only after claiming provider-authoritative evidence", async () => {
+  it("claims card authority in an ordinary organization and replays the sale after it opts in to the pilot", async () => {
+    process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID = "other-pilot-org"
     mockTx.paymentTransaction.findFirst.mockResolvedValueOnce({
       id: "payment-transaction-1",
       organizationId: "org-1",
@@ -1154,7 +1191,7 @@ describe("commitPOSSale accounting wiring", () => {
       },
     })
 
-    await expect(commitPOSSale({
+    const input = {
       ...commitInput(),
       tenders: [{
         method: "CARD" as const,
@@ -1162,8 +1199,9 @@ describe("commitPOSSale accounting wiring", () => {
         paymentTransactionId: "payment-transaction-1",
         cardLast4: "4242",
       }],
-    })).resolves.toMatchObject({ paymentStatus: "PAID", amountPaid: 118 })
-
+    }
+    const original = await commitPOSSale(input)
+    expect(original).toMatchObject({ paymentStatus: "PAID", amountPaid: 118 })
     expect(mockTx.payment.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         method: "CARD",
@@ -1181,7 +1219,16 @@ describe("commitPOSSale accounting wiring", () => {
       }),
       data: { legacyPaymentId: "payment-1" },
     })
-    expect(mockPostPayment).toHaveBeenCalled()
+    expect(mockPostPayment).toHaveBeenCalledTimes(1)
+
+    process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID = "org-1"
+    mockTx.pOSCommitResult.findUnique.mockResolvedValueOnce(completedCommitRecord())
+
+    await expect(commitPOSSale(input)).resolves.toEqual({ ...original, replayed: true })
+    expect(mockTx.pOSCommitResult.create).toHaveBeenCalledTimes(1)
+    expect(mockTx.payment.create).toHaveBeenCalledTimes(1)
+    expect(mockTx.paymentTransaction.updateMany).toHaveBeenCalledTimes(1)
+    expect(mockPostPayment).toHaveBeenCalledTimes(1)
   })
 
   it("stops before stock and payment writes when the cashier-owned active shift claim is lost", async () => {

@@ -273,7 +273,9 @@ function previewTenders(lines: TenderLineState[], total: number): TenderPreview 
       hasNonCashOverpay = true
     }
 
-    paid += Math.min(line.amount, remaining)
+    if (line.method !== "ON_ACCOUNT") {
+      paid += Math.min(line.amount, remaining)
+    }
     remaining = Math.max(0, remaining - line.amount)
   }
 
@@ -285,7 +287,7 @@ function previewTenders(lines: TenderLineState[], total: number): TenderPreview 
     })),
     totalTendered: normalizedLines.reduce((sum, line) => sum + line.amount, 0),
     paid: Math.min(paid, total),
-    due: Math.max(0, total - paid),
+    due: remaining,
     change,
     hasNonCashOverpay,
   }
@@ -305,7 +307,8 @@ function toErrorMessage(error: unknown, fallback: string) {
   return fallback
 }
 
-const tenderMethods: TenderMethod[] = ["CASH"]
+const cashOnlyTenderMethods: TenderMethod[] = ["CASH"]
+const standardTenderMethods: TenderMethod[] = ["CASH", "ON_ACCOUNT"]
 const receiptChannels: ReceiptChannel[] = ["NONE"]
 const posSurfaceClass =
   "dashboard-glass-panel overflow-hidden rounded-lg text-[var(--dash-text)]"
@@ -358,10 +361,11 @@ function POSButton({ className, variant: _variant, ...buttonProps }: ButtonProps
   return <Button {...buttonProps} variant={null as ButtonProps["variant"]} className={cn(posButtonBaseClass, className)} />
 }
 
-export default function ProfessionalPOSSystem() {
+export default function ProfessionalPOSSystem({ cashOnlyPilot = true }: { cashOnlyPilot?: boolean }) {
   const t = useTranslations("pos")
   const locale = useLocale()
   const notifications = useNotifications()
+  const tenderMethods = cashOnlyPilot ? cashOnlyTenderMethods : standardTenderMethods
   const searchRef = useRef<HTMLInputElement>(null)
   const customerSearchRef = useRef<HTMLInputElement>(null)
   const tenderAmountRef = useRef<HTMLInputElement>(null)
@@ -2227,13 +2231,23 @@ export default function ProfessionalPOSSystem() {
                 <div data-testid="pos-charge-footer" className={cn("shrink-0 border-t px-3 py-1", posDividerClass)}>
                   <div data-testid="pos-charge-summary" className="grid grid-cols-2 items-center gap-2 text-center text-xs tabular-nums">
                     <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("tender.paid")}</div>
+                      <div className={posMutedTextClass}>
+                        {onAccountAmountPreview > 0 ? (locale === "fr" ? "Paiement prévu" : "Payment preview") : t("tender.paid")}
+                      </div>
                       <div className="mt-0.5 font-semibold">{money.format(paidPreview)}</div>
                     </div>
                     <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
-                      <div className={posMutedTextClass}>{t("tender.due")}</div>
+                      <div className={posMutedTextClass}>
+                        {onAccountAmountPreview > 0 ? (locale === "fr" ? "Reste à couvrir" : "Uncovered") : t("tender.due")}
+                      </div>
                       <div className="mt-0.5 font-semibold">{money.format(balancePreview)}</div>
                     </div>
+                    {onAccountAmountPreview > 0 ? (
+                      <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
+                        <div className={posMutedTextClass}>{t("tender.methods.ON_ACCOUNT")}</div>
+                        <div className="mt-0.5 font-semibold">{money.format(onAccountAmountPreview)}</div>
+                      </div>
+                    ) : null}
                     <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("tender.change")}</div>
                       <div className="mt-0.5 font-semibold">{money.format(changePreview)}</div>

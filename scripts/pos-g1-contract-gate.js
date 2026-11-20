@@ -161,6 +161,8 @@ function buildG1ContractGate(root = process.cwd()) {
   const masterRoadmap = readText(root, MASTER_ROADMAP_PATH)
   const legacyRoadmap = readText(root, LEGACY_ROADMAP_PATH)
   const posService = readText(root, "services/pos/pos.service.ts")
+  const posPilot = readText(root, "services/pos/pos-g0-pilot.ts")
+  const posPage = readText(root, "app/[locale]/(dashboard)/dashboard/pos/page.tsx")
   const posComponent = readText(root, "components/pos/ProfessionalPOSSystem.tsx")
   const tenderActions = readText(root, "actions/pos/tender.actions.ts")
   const inventoryService = readText(root, "services/inventory/inventory-stock-event.service.ts")
@@ -253,9 +255,17 @@ function buildG1ContractGate(root = process.cwd()) {
     {
       id: "cash_only_and_store_credit_runtime_control",
       ready:
-        posService.includes("assertSupportedSaleTenders") &&
-        posService.includes("STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE") &&
-        posComponent.includes('const tenderMethods: TenderMethod[] = ["CASH"]'),
+        posService.includes("assertSupportedSaleTenders(input.tenders)") &&
+        posService.includes('tenders.some((tender) => tender.method === "STORE_CREDIT")') &&
+        posService.includes("throw new BusinessRuleError(STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE)") &&
+        posPilot.includes("process.env.AQSTOQFLOW_POS_G0_CASH_ONLY_ORGANIZATION_ID?.trim()") &&
+        posPilot.includes("return Boolean(pilotOrganizationId) && pilotOrganizationId === organizationId") &&
+        posService.includes("const cashOnlyPilot = isPOSG0CashOnlyPilot(rawInput.organizationId)") &&
+        posService.includes('if (cashOnlyPilot && input.tenders.some((tender) => tender.method !== "CASH"))') &&
+        posService.includes("throw new BusinessRuleError(DEVELOPMENT_CASH_ONLY_TENDER_MESSAGE)") &&
+        posPage.includes("cashOnlyPilot={isPOSG0CashOnlyPilot(context.orgId)}") &&
+        posComponent.includes('const cashOnlyTenderMethods: TenderMethod[] = ["CASH"]') &&
+        posComponent.includes("cashOnlyPilot ? cashOnlyTenderMethods : standardTenderMethods"),
     },
     {
       id: "refund_void_fresh_auth_and_compensation_contract",
