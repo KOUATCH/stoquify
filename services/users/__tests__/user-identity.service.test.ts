@@ -6,6 +6,7 @@ import { logSecurityEvent } from "@/lib/security/audit-log"
 import { db } from "@/prisma/db"
 import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
 import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
+import { Resend } from "resend"
 import {
   acceptInvitationWorkflow,
   changeUserPasswordWorkflow,
@@ -114,7 +115,9 @@ const mockLogSecurityEvent = logSecurityEvent as jest.Mock
 const mockEnforcePublicIdentityAbuseLimits = enforcePublicIdentityAbuseLimits as jest.Mock
 
 const mockRecordReferralConversionInTx = recordReferralConversionInTx as jest.Mock
+const mockResend = Resend as jest.Mock
 beforeEach(() => {
+  mockResend.mockClear()
   mockDb.$transaction.mockReset()
   mockDb.user.findFirst.mockReset()
   mockDb.user.findUnique.mockReset()
@@ -173,6 +176,23 @@ function buildInviteTransaction(role: InviteRoleFixture | null) {
 }
 
 describe("user identity service creation and invite workflows", () => {
+  it("loads identity workflows without constructing an email client when the API key is absent", () => {
+    const originalKey = process.env.RESEND_API_KEY
+    delete process.env.RESEND_API_KEY
+    try {
+      jest.isolateModules(() => {
+        const { Resend: isolatedResend } = jest.requireMock("resend") as typeof import("resend")
+        const { getInviteRegistrationContext } = jest.requireActual<typeof import("../user-identity.service")>(
+          "../user-identity.service",
+        )
+        expect(getInviteRegistrationContext).toEqual(expect.any(Function))
+        expect(isolatedResend).not.toHaveBeenCalled()
+      })
+    } finally {
+      if (originalKey !== undefined) process.env.RESEND_API_KEY = originalKey
+    }
+  })
+
   it("preserves the legacy registration conflict response without creating an organization", async () => {
     const tx = {
       user: {
@@ -479,6 +499,10 @@ describe("user identity service creation and invite workflows", () => {
       status: 200,
       data: { id: "email-1" },
     })
+    expect(mockResend).toHaveBeenCalledTimes(1)
+    expect(mockResend.mock.results[0].value.emails.send).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "user@example.com" }),
+    )
     expect(tx.invite.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         email: "user@example.com",

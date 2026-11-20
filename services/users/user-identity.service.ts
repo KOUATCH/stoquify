@@ -31,7 +31,9 @@ import { InviteStatus, Locale as PrismaLocale, LocationType, type Prisma } from 
 import { randomBytes, randomUUID } from "crypto"
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function identityEmailClient() {
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
 const ADMIN_USER_ROLE = {
   nameEn: "Admin",
@@ -220,7 +222,7 @@ async function sendVerificationEmail(input: {
   expiresAt?: Date | null
 }) {
   try {
-    await resend.emails.send({
+    await identityEmailClient().emails.send({
       from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to: input.email,
       subject: "Verify your StockFlow account",
@@ -761,7 +763,7 @@ export async function sendInviteWorkflow(input: InviteWorkflowInput): Promise<St
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? process.env.AUTH_URL ?? "http://localhost:3000"
     const linkUrl = `${baseUrl}/user-invite/invitation?token=${encodeURIComponent(token)}`
     const companyName = input.actor.organizationName ?? "StockFlow"
-    const { data: emailData, error } = await resend.emails.send({
+    const { data: emailData, error } = await identityEmailClient().emails.send({
       from: "onboarding@resend.dev",
       to: email,
       subject: `Welcome to ${companyName} - ${(role.nameEn || role.nameFr || roleName)} role`,
@@ -1099,7 +1101,7 @@ export async function requestPasswordResetLinkWorkflow(
   const resetPasswordLink = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(normalizedEmail)}`
 
   try {
-    await resend.emails.send({
+    await identityEmailClient().emails.send({
       from: "onboarding@resend.dev",
       to: normalizedEmail,
       subject: "Reset Password Request",
