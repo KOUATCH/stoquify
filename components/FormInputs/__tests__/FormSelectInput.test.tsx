@@ -35,16 +35,15 @@ beforeEach(() => {
 });
 
 test("finds a role by its display label and selects it with the keyboard", async () => {
-  const user = userEvent.setup();
   render(<ControlledRolePicker />);
 
-  await user.click(screen.getByRole("button", { name: "User Roles: Cashier" }));
+  await userEvent.click(screen.getByRole("button", { name: "User Roles: Cashier" }));
   const search = screen.getByRole("combobox", { name: "User Roles" });
-  await user.type(search, "Inventory");
+  await userEvent.type(search, "Inventory");
 
   expect(screen.queryByRole("option", { name: "Cashier" })).not.toBeInTheDocument();
   expect(screen.getByRole("option", { name: "Inventory Manager" })).toBeVisible();
-  await user.keyboard("{Enter}");
+  await userEvent.keyboard("{Enter}");
 
   expect(screen.getByRole("button", { name: "User Roles: Inventory Manager" })).toHaveFocus();
   expect(screen.queryByRole("combobox", { name: "User Roles" })).not.toBeInTheDocument();
@@ -52,11 +51,10 @@ test("finds a role by its display label and selects it with the keyboard", async
 
 test("shows the role search prompt and empty state in French", async () => {
   jest.mocked(useLocale).mockReturnValue("fr");
-  const user = userEvent.setup();
   render(<ControlledRolePicker />);
 
-  await user.click(screen.getByRole("button", { name: "User Roles: Cashier" }));
-  await user.type(screen.getByPlaceholderText("Rechercher un rôle…"), "comptable");
+  await userEvent.click(screen.getByRole("button", { name: "User Roles: Cashier" }));
+  await userEvent.type(screen.getByPlaceholderText("Rechercher un rôle…"), "comptable");
 
   expect(screen.getByText("Aucun rôle correspondant.")).toBeVisible();
 });

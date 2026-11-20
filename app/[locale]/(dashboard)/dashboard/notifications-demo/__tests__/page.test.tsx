@@ -5,6 +5,12 @@ import { observeModuleAccess } from "@/services/modules/module-entitlement.servi
 
 import NotificationsDemoPage from "../page"
 
+jest.mock("next/navigation", () => ({
+  notFound: () => {
+    throw new Error("NEXT_NOT_FOUND")
+  },
+}))
+
 jest.mock("@/components/notifications/EnhancedNotificationTest", () => ({
   EnhancedNotificationTest: () => <section aria-label="notification-demo-client">Notification demo client</section>,
 }))
@@ -64,6 +70,7 @@ function params(locale = "en") {
 
 describe("notifications demo route", () => {
   beforeEach(() => {
+    jest.replaceProperty(process, "env", { ...process.env, NODE_ENV: "development" })
     jest.clearAllMocks()
     mockRequirePermission.mockResolvedValue({
       orgId: "org-1",
@@ -77,6 +84,18 @@ describe("notifications demo route", () => {
       mode: "observe",
       moduleSlug: "settings",
     })
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it("does not expose notification diagnostics in production", async () => {
+    jest.replaceProperty(process, "env", { ...process.env, NODE_ENV: "production" })
+
+    await expect(NotificationsDemoPage({ params: params() })).rejects.toThrow("NEXT_NOT_FOUND")
+    expect(mockRequirePermission).not.toHaveBeenCalled()
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
   })
 
   it("guards the notification demo with read permission and settings module observation", async () => {

@@ -75,7 +75,7 @@ function allow(permission: string) {
     permissions: [permission],
   })
   mockObserveModuleAccess.mockResolvedValue({
-    allowed: false,
+    allowed: true,
     wouldBlock: true,
     result: "would_block",
     mode: "observe",
@@ -183,10 +183,10 @@ describe("legacy supplier system route boundaries", () => {
   })
 
   it.each([
-    ["list", SuppliersSystemPage, { locale: "en" }, "Supplier system is not available for this role", "/en/dashboard/purchases"],
-    ["create", CreateSupplierSystemPage, { locale: "en" }, "Supplier creation is not available for this role", "/en/dashboard/purchases/suppliers"],
-    ["analytics", SupplierSystemAnalyticsPage, { locale: "en", id: "supplier-1" }, "Supplier analytics are not available for this role", "/en/dashboard/purchases/suppliers"],
-    ["edit", EditSupplierSystemPage, { locale: "fr", id: "supplier-2" }, "Supplier editing is not available for this role", "/fr/dashboard/purchases/suppliers"],
+    ["list", SuppliersSystemPage, { locale: "en" }, "Supplier system dashboard is not available for this role", "/en/dashboard/purchases"],
+    ["create", CreateSupplierSystemPage, { locale: "en" }, "Create supplier is not available for this role", "/en/dashboard/purchases"],
+    ["analytics", SupplierSystemAnalyticsPage, { locale: "en", id: "supplier-1" }, "Supplier analytics is not available for this role", "/en/dashboard/purchases"],
+    ["edit", EditSupplierSystemPage, { locale: "fr", id: "supplier-2" }, "Edit supplier is not available for this role", "/fr/dashboard/purchases"],
   ])("fails closed before rendering the %s legacy supplier surface when RBAC denies access", async (_name, Page, params, title, href) => {
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 
@@ -204,7 +204,7 @@ describe("legacy supplier system route boundaries", () => {
 
     render(await SuppliersSystemPage({ params: Promise.resolve({ locale: "en" }) }))
 
-    expect(screen.getByRole("heading", { name: "Supplier system needs an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Supplier system dashboard needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockSupplierManagementDashboard).not.toHaveBeenCalled()

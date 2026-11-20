@@ -315,6 +315,14 @@ describe("POS shift close evidence", () => {
       data: {
         status: "APPLIED",
         processedAt: expect.any(Date),
+        audits: {
+          create: {
+            organizationId: "org-1",
+            action: "APPLIED",
+            reason: "Business event applied to its domain mutation.",
+            metadata: { status: "APPLIED" },
+          },
+        },
       },
     })
     expect(createdEvent).toMatchObject({

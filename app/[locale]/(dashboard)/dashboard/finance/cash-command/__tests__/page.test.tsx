@@ -14,6 +14,10 @@ jest.mock("@/components/dashboard/DashboardRouteState", () => ({
   DashboardRouteState: ({ kind }: { kind: string }) => <div>{`route:${kind}`}</div>,
 }))
 
+jest.mock("@/components/modules/TenantModuleActivationButton", () => ({
+  TenantModuleActivationButton: () => null,
+}))
+
 jest.mock("@/i18n/routing", () => ({
   localizePath: (href: string) => href,
   pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
