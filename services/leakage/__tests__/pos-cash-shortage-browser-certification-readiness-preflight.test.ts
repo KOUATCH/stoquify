@@ -64,7 +64,7 @@ describe("POS cash-shortage browser certification readiness preflight", () => {
     const result = evaluatePosCashShortageBrowserCertificationReadinessPreflight({
       ...sources,
       incidentDetailRouteSourceText: sources.incidentDetailRouteSourceText?.replace(
-        /requirePermission|resource: "WorkflowAssuranceIncident"|getAssuranceIncidentDetailData/g,
+        /requirePermission|resource: "WorkflowAssuranceIncident"|withAssuranceSurfaceAccess|getAssuranceIncidentDetailData/g,
         "loadIncidentDirectly",
       ) ?? null,
     });
@@ -72,6 +72,16 @@ describe("POS cash-shortage browser certification readiness preflight", () => {
     expect(result.missingRequirements).toEqual(
       expect.arrayContaining(["incident_detail_route_present"]),
     );
+  });
+
+  it("blocks when the incident reader stops using the authenticated organization", () => {
+    const sources = currentSources();
+    const result = evaluatePosCashShortageBrowserCertificationReadinessPreflight({
+      ...sources,
+      incidentDetailRouteSourceText: sources.incidentDetailRouteSourceText?.replace("organizationId: ctx.orgId", "organizationId: requestedOrgId") ?? null,
+    });
+
+    expect(result.missingRequirements).toContain("incident_detail_route_present");
   });
 
   it("blocks if browser evidence lacks accessibility and layout results", () => {
@@ -107,6 +117,8 @@ function currentSources() {
     incidentDetailRouteSourceText: readOptional(
       "app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx",
     ),
+    assuranceRouteAccessSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-access.tsx"),
+    assuranceRouteCatalogSourceText: read("app/[locale]/(dashboard)/dashboard/assurance/assurance-route-data-access.ts"),
     controlTowerActionSourceText: read("actions/assurance/workflow-assurance-control-tower.actions.ts"),
     incidentDetailViewSourceText: read("components/assurance/AssuranceIncidentDetailView.tsx"),
     incidentActionsComponentSourceText: read("components/assurance/AssuranceIncidentActions.tsx"),

@@ -32,6 +32,7 @@ jest.mock("next/link", () => ({
 }))
 
 jest.mock("@/i18n/routing", () => ({
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
   localizePath: (href: string, locale: string) => `/${locale}${href}`,
 }))
 
@@ -78,6 +79,7 @@ const authContext = {
   userId: "user-1",
   permissions: ["dashboard.read", "finance.read"],
   roles: [{ code: "MANAGER" }],
+  isSuperUser: false,
 }
 
 function params(locale = "en") {
@@ -112,8 +114,10 @@ describe("daily digest dashboard route state smoke", () => {
     )
     expect(getDailyHabitDigestData).toHaveBeenCalledWith({
       organizationId: "org-1",
+      actorId: "user-1",
       actorPermissions: ["dashboard.read", "finance.read"],
       actorRoleCodes: ["MANAGER"],
+      isSuperUser: false,
     })
   })
 

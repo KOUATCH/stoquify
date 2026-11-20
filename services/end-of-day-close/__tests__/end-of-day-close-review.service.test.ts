@@ -412,8 +412,11 @@ describe("branch daily-close review service", () => {
     tx.businessEvent.create.mockRejectedValue(new Error("event write failed"));
 
     await expect(startBranchDailyCloseReview(defaultInput())).rejects.toMatchObject({
-      name: "BusinessRuleError",
-      message: "Branch daily-close review could not be started safely.",
+      name: "ApplicationError",
+      code: "INTERNAL_ERROR",
+      status: 500,
+      expose: false,
+      message: "Business event could not be recorded.",
     });
 
     expect(mockDb.$transaction).toHaveBeenCalledTimes(1);

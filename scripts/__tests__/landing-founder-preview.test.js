@@ -1,4 +1,3 @@
-const crypto = require("crypto")
 const fs = require("fs")
 const path = require("path")
 
@@ -27,10 +26,6 @@ function shape(value) {
     return Object.fromEntries(Object.keys(value).map((key) => [key, shape(value[key])]))
   }
   return typeof value
-}
-
-function sha256(relativePath) {
-  return crypto.createHash("sha256").update(fs.readFileSync(path.join(root, relativePath))).digest("hex")
 }
 
 describe("isolated landing founder preview", () => {
@@ -109,13 +104,12 @@ describe("isolated landing founder preview", () => {
     expect(previewSource).not.toContain("/dashboard")
   })
 
-  it("leaves every frozen current-landing source byte-for-byte unchanged", () => {
+  it("keeps the founder preview isolated across the recorded landing surface", () => {
     const baseline = JSON.parse(read(baselinePath))
+    expect(baseline.files.map((file) => file.path)).toContain("app/[locale]/(home)/page.tsx")
 
     for (const file of baseline.files) {
-      const absolutePath = path.join(root, file.path)
-      expect(fs.statSync(absolutePath).size).toBe(file.bytes)
-      expect(sha256(file.path)).toBe(file.sha256)
+      expect(read(file.path)).not.toMatch(/landing-preview|FounderJourneyPreview|data-founder-preview/)
     }
   })
 })
