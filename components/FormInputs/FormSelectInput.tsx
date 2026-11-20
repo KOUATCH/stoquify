@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command } from "cmdk";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { useLocale } from "next-intl";
 import { useState } from "react";
+
+const roleSearchCopy = {
+  en: { placeholder: "Search roles…", empty: "No matching roles." },
+  fr: { placeholder: "Rechercher un rôle…", empty: "Aucun rôle correspondant." },
+};
 
 type RoleOption = { label: string; value: string };
 
@@ -28,6 +34,7 @@ export default function FormSelectInput({
   labelShown = true,
 }: FormSelectInputProps) {
   const [open, setOpen] = useState(false);
+  const copy = roleSearchCopy[useLocale() === "fr" ? "fr" : "en"];
 
   return (
     <div>
@@ -53,11 +60,11 @@ export default function FormSelectInput({
           <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] p-0">
             <Command label={label}>
               <Command.Input
-                placeholder="Search roles…"
+                placeholder={copy.placeholder}
                 className="w-full rounded-t-lg border-b bg-transparent px-3 py-2 text-sm"
               />
               <Command.List className="max-h-56 overflow-y-auto p-1">
-                <Command.Empty className="px-2 py-2 text-sm">No matching roles.</Command.Empty>
+                <Command.Empty className="px-2 py-2 text-sm">{copy.empty}</Command.Empty>
                 {options.map((item) => (
                   <Command.Item
                     key={item.value}
